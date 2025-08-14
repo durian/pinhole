@@ -91,7 +91,7 @@ impl AppState {
         }
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         column![
             text("Pinhole Calculations").size(32),
             horizontal_rule(48),
@@ -138,7 +138,7 @@ impl AppState {
                 text(format!(
                     "Vignetting {:.1} f-stops at {:.1} degrees view angle",
                     //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
-                    stop_equivalent(self.calc_vignetting().0),
+                    pinhole::stop_equivalent(self.calc_vignetting().0),
                     2. * self.calc_vignetting().1
                 )),
             ],
@@ -191,7 +191,7 @@ impl AppState {
                 )),
                 text(format!(
                     "Distance from f/32 is {:.1} f-stops",
-                    delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
+                    pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
                 )),
             ],
             horizontal_rule(48),
@@ -213,47 +213,4 @@ fn _third_stops(fstop: f32) -> f32 {
 
     let n = 3.0 * fstop.log2() / base.log2();
     n
-}
-
-// Decimal part * 3 will give a "thirds of a stop" approximation.
-// Factor was 6. for 1/3rd stops, now we return stops.
-fn delta_thirds(fstop0: f32, fstop1: f32) -> f32 {
-    2. * (fstop1 / fstop0).log2() // multiply by 6 for 1/3rd stops.
-}
-
-// 0.56 (eg from cos^4) is 0.84 stops darker.
-fn stop_equivalent(fract: f32) -> f32 {
-    -fract.log2()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    // Hard top test one stop because sqrt(2)s.
-    fn two_stops() {
-        let diff = delta_thirds(32., 64.);
-        assert_eq!(diff, 2.);
-    }
-
-    #[test]
-    // Hard top test one stop because sqrt(2)s.
-    fn four_stops() {
-        let diff = delta_thirds(16., 64.);
-        assert_eq!(diff, 4.);
-    }
-
-    #[test]
-    fn foo() {
-        let (state, _task) = AppState::new();
-        let va = state.calc_viewangle();
-        assert_eq!(va, 80.53768);
-    }
-
-    #[test]
-    fn vignetting() {
-        let v = stop_equivalent(0.25);
-        assert_eq!(v, 2.);
-    }
 }

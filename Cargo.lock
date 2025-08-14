@@ -3160,19 +3160,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
-name = "phcalc"
-version = "0.1.0"
-dependencies = [
- "iced",
-]
-
-[[package]]
 name = "phcalc-egui"
 version = "0.1.0"
 dependencies = [
  "eframe",
  "egui",
  "env_logger",
+ "pinhole",
+]
+
+[[package]]
+name = "phcalc-iced"
+version = "0.1.0"
+dependencies = [
+ "iced",
  "pinhole",
 ]
 

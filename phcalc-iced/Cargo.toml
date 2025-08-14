@@ -1,7 +1,11 @@
 [package]
-name = "phcalc"
+name = "phcalc-iced"
 version = "0.1.0"
+authors = ["Peter Berck <peter@berck.se>"]
+license = "MIT OR Apache-2.0"
 edition = "2024"
+publish = false
 
 [dependencies]
 iced = "0.13.1"
+pinhole = { path = "../pinhole" }

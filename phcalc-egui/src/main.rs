@@ -157,7 +157,7 @@ impl eframe::App for MyApp {
             //
             ui.separator();
             ui.label(
-                RichText::new("(c) something, blah")
+                RichText::new("(c) Peter Berck 2025")
                     .size(4.)
                     .underline()
                     .color(Color32::RED),

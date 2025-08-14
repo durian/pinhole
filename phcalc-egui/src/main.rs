@@ -114,7 +114,16 @@ impl eframe::App for MyApp {
                 "View angle {:.1} degrees",
                 2. * self.calc_viewangle()
             ));
-            ui.label(format!("F-stop {:.1}", 50. / self.ph_diameter));
+            ui.label(format!(
+                "F-stop {:.1} distance from f/32 is {:.1} f-stops",
+                self.ph_focallength / self.ph_diameter,
+                pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
+            ));
+            //
+            ui.label(format!(
+                "Distance from f/32 is {:.1} f-stops",
+                pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
+            ));
             //
             ui.label(format!(
                 "Vignetting for desired radius {:.1} f-stops at {:.1} degrees angle",

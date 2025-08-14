@@ -97,7 +97,7 @@ impl AppState {
             horizontal_rule(48),
             column![
                 // Label for this pane.
-                text("View angle").size(32),
+                text("View angle").size(24),
                 // Value and slider.
                 row![
                     text(format!("diameter {:.2} mm  ", self.ph_diameter))
@@ -145,7 +145,7 @@ impl AppState {
             horizontal_rule(48),
             // Optimal size calculation.
             column![
-                text("Optimal size").size(32),
+                text("Optimal size").size(24),
                 row![
                     text(format!("Wavelength {:.0} nm  ", self.ph_wavelength))
                         .width(Length::FillPortion(1)),

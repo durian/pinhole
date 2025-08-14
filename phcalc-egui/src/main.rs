@@ -67,7 +67,7 @@ impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             //ctx.set_pixels_per_point(3.0);
-            ctx.set_zoom_factor(1.5);
+            ctx.set_zoom_factor(1.4);
             ui.style_mut().spacing.item_spacing = Vec2::new(4.0, 12.0);
             ui.style_mut().spacing.indent = 16.0;
             //
@@ -115,16 +115,21 @@ impl eframe::App for MyApp {
                 2. * self.calc_viewangle()
             ));
             ui.label(format!(
-                "F-stop {:.1} distance from f/32 is {:.1} f-stops",
+                "F-stop f/{:.1} is {:.1} f-stops from f/32",
                 self.ph_focallength / self.ph_diameter,
                 pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
             ));
-            //
-            ui.label(format!(
-                "Distance from f/32 is {:.1} f-stops",
-                pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
-            ));
-            //
+            ////
+            /*
+            ui.horizontal(|ui| {
+                ui.label(RichText::new("F-stop"));
+                ui.label(RichText::new("167").color(Color32::RED));
+                ui.label("is");
+                ui.label(RichText::new("12").color(Color32::BLUE));
+                ui.label("f-stops from f/32");
+            });
+            */
+            ////
             ui.label(format!(
                 "Vignetting for desired radius {:.1} f-stops at {:.1} degrees angle",
                 //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
@@ -167,9 +172,8 @@ impl eframe::App for MyApp {
             ui.separator();
             ui.label(
                 RichText::new("(c) Peter Berck 2025")
-                    .size(4.)
-                    .underline()
-                    .color(Color32::RED),
+                    .size(8.)
+                    .color(Color32::GRAY),
             );
         });
     }

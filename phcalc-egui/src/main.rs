@@ -83,8 +83,9 @@ impl eframe::App for MyApp {
                     egui::Slider::new(&mut self.ph_diameter, 0.01..=2.)
                         .drag_value_speed(0.001)
                         .min_decimals(3)
-                        .custom_formatter(|n, _| format!("{:.3} / {:.0}", n, n * 1000.))
-                        .text("Pinhole Ø (mm/micron)"),
+                        //.custom_formatter(|n, _| format!("{:.3} / {:.0}", n, n * 1000.))
+                        //.text("Pinhole Ø (mm/micron)"),
+                        .text("Pinhole Ø (mm)"),
                 );
             });
             ui.horizontal(|ui| {
@@ -105,13 +106,81 @@ impl eframe::App for MyApp {
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - txt_width;
+                ui.spacing_mut().slider_width = max_width - (txt_width + 84.);
                 ui.add(
-                    egui::Slider::new(&mut self.ph_projradius, 10.0..=500.)
-                        .text("Desired projection radius (mm)"),
+                    egui::Slider::new(&mut self.ph_projradius, 10.0..=1000.)
+                        .fixed_decimals(0)
+                        .drag_value_speed(1.)
+                        .text("Desired projection (mm)"),
                 );
+                //});
+                egui::ComboBox::from_label("")
+                    .selected_text(format!("{:.0}", self.ph_projradius))
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(24., 36.),
+                            "35mm",
+                        ); // is diameter!
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 45.),
+                            "645",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 60.),
+                            "6x6",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 70.),
+                            "6x7",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 90.),
+                            "6x9",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 120.),
+                            "6x12",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(4. * 25.4, 5. * 25.4),
+                            "4\"x5\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(5. * 25.4, 7. * 25.4),
+                            "5\"x7\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(8. * 25.4, 10. * 25.4),
+                            "8\"x10\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(11. * 25.4, 14. * 25.4),
+                            "11\"x14\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(16. * 25.4, 20. * 25.4),
+                            "16\"x20\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(20. * 25.4, 24. * 25.4),
+                            "20\"x24\"",
+                        );
+                        // 5"x7"/219, 8"x10"/326, 11"x14", 16"x20", 20"x24"
+                        //ui.selectable_value(&mut self.ph_projradius, 93., "6x7");
+                    });
             });
-
             ui.label(format!(
                 "View angle {:.1} degrees",
                 2. * self.calc_viewangle()

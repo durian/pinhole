@@ -66,6 +66,7 @@ impl MyApp {
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+            let txt_width = 224.;
             //ctx.set_pixels_per_point(3.0);
             ctx.set_zoom_factor(1.4);
             ui.style_mut().spacing.item_spacing = Vec2::new(4.0, 12.0);
@@ -77,16 +78,17 @@ impl eframe::App for MyApp {
             let max_width = ui.max_rect().width();
             //
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_diameter, 0.01..=2.)
                         .drag_value_speed(0.001)
                         .min_decimals(3)
-                        .text("Pinhole diameter (mm)"),
+                        .custom_formatter(|n, _| format!("{:.3} / {:.0}", n, n * 1000.))
+                        .text("Pinhole Ø (mm/micron)"),
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_thickness, 0.01..=1.)
                         .drag_value_speed(0.001)
@@ -94,7 +96,7 @@ impl eframe::App for MyApp {
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_focallength, 1.0..=10000.)
                         .logarithmic(true)
@@ -103,7 +105,7 @@ impl eframe::App for MyApp {
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_projradius, 10.0..=500.)
                         .text("Desired projection radius (mm)"),
@@ -139,14 +141,14 @@ impl eframe::App for MyApp {
             //
             ui.separator();
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_wavelength, 350.0..=700.)
                         .text("Wavelength (nm)"),
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_rayleighfactor, 1.0..=2.0)
                         .fixed_decimals(2)
@@ -154,7 +156,7 @@ impl eframe::App for MyApp {
                 );
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = max_width - 224.;
+                ui.spacing_mut().slider_width = max_width - txt_width;
                 ui.add(
                     egui::Slider::new(&mut self.ph_subjectdist, 0.01..=f32::INFINITY) //  10000.)
                         .logarithmic(true)

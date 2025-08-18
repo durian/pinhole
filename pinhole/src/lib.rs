@@ -46,6 +46,10 @@ pub fn needed_focallength(ph_radius: f32, ph_viewangle: f32) -> f32 {
     ph_radius * (90. - ph_viewangle).to_radians().tan()
 }
 
+pub fn projection_diameter(x: f32, y: f32) -> f32 {
+    ((x * x) + (y * y)).sqrt()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -91,5 +95,11 @@ mod tests {
     fn needed_f() {
         let nf = needed_focallength(22., 45.);
         assert_eq!(nf, 22.);
+    }
+
+    #[test]
+    fn proj_diameter() {
+        let pd = projection_diameter(3., 4.);
+        assert_eq!(pd, 5.);
     }
 }

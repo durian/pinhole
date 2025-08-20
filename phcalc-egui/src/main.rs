@@ -9,11 +9,7 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Pinhole Calculations.",
         options,
-        Box::new(|_cc| {
-            // This gives us image support:
-
-            Ok(Box::<MyApp>::default())
-        }),
+        Box::new(|_cc| Ok(Box::<MyApp>::default())),
     )
 }
 

@@ -47,7 +47,7 @@ pub fn needed_focallength(ph_radius: f32, ph_viewangle: f32) -> f32 {
 }
 
 pub fn projection_diameter(x: f32, y: f32) -> f32 {
-    ((x * x) + (y * y)).sqrt()
+    ((x * x) + (y * y)).sqrt().ceil()
 }
 
 #[cfg(test)]

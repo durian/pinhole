@@ -37,8 +37,11 @@ pub fn delta_thirds(fstop0: f32, fstop1: f32) -> f32 {
 
 // Coverage for a given focal length with a given view angle.
 // This radius needs to cover the film, so to speak.
-pub fn coverage_radius(ph_focallength: f32, ph_viewangle: f32) -> f32 {
+pub fn _coverage_radius(ph_focallength: f32, ph_viewangle: f32) -> f32 {
     ph_focallength / (90.0 - (ph_viewangle)).to_radians().tan()
+}
+pub fn coverage_radius(ph_focallength: f32, ph_viewangle: f32) -> f32 {
+    ph_focallength * ph_viewangle.to_radians().tan()
 }
 
 // To cover this radius, we need a focal length of ...
@@ -46,6 +49,7 @@ pub fn needed_focallength(ph_radius: f32, ph_viewangle: f32) -> f32 {
     ph_radius * (90. - ph_viewangle).to_radians().tan()
 }
 
+// This is the diameter needed to cover the x by y film size.
 pub fn projection_diameter(x: f32, y: f32) -> f32 {
     ((x * x) + (y * y)).sqrt().ceil()
 }

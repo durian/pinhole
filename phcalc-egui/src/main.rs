@@ -31,7 +31,7 @@ impl Default for MyApp {
             ph_thickness: 0.04,
             ph_rayleighfactor: 1.56,
             ph_focallength: 50.,
-            ph_projradius: 42.,
+            ph_projradius: 44.,
             ph_wavelength: 550.,
             ph_magnification: 0.,
             ph_subjectdist: f32::INFINITY,
@@ -56,6 +56,10 @@ impl MyApp {
     fn calc_vignetting(&self) -> (f32, f32) {
         // projradius is a build parameter, set with slider.
         pinhole::calc_vignetting(self.ph_focallength, self.ph_projradius)
+    }
+
+    fn calc_coverage_radius(&self) -> f32 {
+        pinhole::coverage_radius(self.ph_focallength, self.calc_viewangle())
     }
 }
 
@@ -178,8 +182,9 @@ impl eframe::App for MyApp {
                     });
             });
             ui.label(format!(
-                "View angle {:.1} degrees",
-                2. * self.calc_viewangle()
+                "View angle {:.1} degrees which covers a diameter of {:.1}mm",
+                2. * self.calc_viewangle(),
+                2. * self.calc_coverage_radius(),
             ));
             ui.label(format!(
                 "F-stop f/{:.1} is {:.1} f-stops from f/32",

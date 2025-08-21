@@ -71,6 +71,7 @@ impl MyApp {
             x if (108.0..110.0).contains(&x) => "6x9".to_string(),
             x if (134.0..136.0).contains(&x) => "6x12".to_string(),
             x if (162.0..164.0).contains(&x) => "4\"x5\"".to_string(),
+            x if (180.0..182.0).contains(&x) => "6x17".to_string(),
             x if (218.0..220.0).contains(&x) => "5\"x7\"".to_string(),
             x if (325.0..327.0).contains(&x) => "8\"x10\"".to_string(),
             x if (452.0..454.0).contains(&x) => "11\"x14\"".to_string(),
@@ -170,6 +171,11 @@ impl eframe::App for MyApp {
                             &mut self.ph_projradius,
                             pinhole::projection_diameter(4. * 25.4, 5. * 25.4),
                             "4\"x5\"",
+                        );
+                        ui.selectable_value(
+                            &mut self.ph_projradius,
+                            pinhole::projection_diameter(60., 170.),
+                            "6x17",
                         );
                         ui.selectable_value(
                             &mut self.ph_projradius,

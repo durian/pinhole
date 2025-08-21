@@ -61,6 +61,24 @@ impl MyApp {
     fn calc_coverage_radius(&self) -> f32 {
         pinhole::coverage_radius(self.ph_focallength, self.calc_viewangle())
     }
+
+    fn diameter_to_filmsize(&self, diameter: f32) -> String {
+        match diameter {
+            x if (43.0..45.0).contains(&x) => "35mm".to_string(),
+            x if (74.0..76.0).contains(&x) => "645".to_string(),
+            x if (84.0..86.0).contains(&x) => "6x6".to_string(),
+            x if (92.0..94.0).contains(&x) => "6x7".to_string(),
+            x if (108.0..110.0).contains(&x) => "6x9".to_string(),
+            x if (134.0..136.0).contains(&x) => "6x12".to_string(),
+            x if (162.0..164.0).contains(&x) => "4\"x5\"".to_string(),
+            x if (218.0..220.0).contains(&x) => "5\"x7\"".to_string(),
+            x if (325.0..327.0).contains(&x) => "8\"x10\"".to_string(),
+            x if (452.0..454.0).contains(&x) => "11\"x14\"".to_string(),
+            x if (650.0..652.0).contains(&x) => "16\"x20\"".to_string(),
+            x if (793.0..795.0).contains(&x) => "20\"x24\"".to_string(),
+            _ => "Custom".to_string(),
+        }
+    }
 }
 
 impl eframe::App for MyApp {
@@ -115,7 +133,8 @@ impl eframe::App for MyApp {
                 );
                 //});
                 egui::ComboBox::from_label("")
-                    .selected_text(format!("{:.0}", self.ph_projradius))
+                    //.selected_text(format!("{:.0}", self.ph_projradius))
+                    .selected_text(self.diameter_to_filmsize(self.ph_projradius))
                     .show_ui(ui, |ui| {
                         ui.selectable_value(
                             &mut self.ph_projradius,

@@ -76,7 +76,7 @@ impl MyApp {
             x if (452.0..454.0).contains(&x) => "11\"x14\"".to_string(),
             x if (650.0..652.0).contains(&x) => "16\"x20\"".to_string(),
             x if (793.0..795.0).contains(&x) => "20\"x24\"".to_string(),
-            _ => "Custom".to_string(),
+            x => format!("{:.1} sq", ((x * x) / 2.0).sqrt()), // _ => "Custom".to_string(),
         }
     }
 }

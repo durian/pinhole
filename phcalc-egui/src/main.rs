@@ -55,7 +55,7 @@ impl MyApp {
 
     fn calc_vignetting(&self) -> (f32, f32) {
         // projradius is a build parameter, set with slider.
-        pinhole::calc_vignetting(self.ph_focallength, self.ph_projradius)
+        pinhole::calc_vignetting(self.ph_focallength, self.ph_projradius / 2.)
     }
 
     fn calc_coverage_radius(&self) -> f32 {
@@ -111,7 +111,7 @@ impl eframe::App for MyApp {
                     egui::Slider::new(&mut self.ph_projradius, 10.0..=1000.)
                         .fixed_decimals(0)
                         .drag_value_speed(1.)
-                        .text("Desired projection (mm)"),
+                        .text("Desired projection Ø (mm)"),
                 );
                 //});
                 egui::ComboBox::from_label("")
@@ -203,10 +203,11 @@ impl eframe::App for MyApp {
             */
             ////
             ui.label(format!(
-                "Vignetting for desired radius {:.1} f-stops at {:.1} degrees angle",
+                "Vignetting for desired projection Ø {:.1} f-stops ({:.2}) at {:.1} degrees angle",
                 //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                 pinhole::stop_equivalent(self.calc_vignetting().0),
-                2. * self.calc_vignetting().1
+                self.calc_vignetting().0,
+                self.calc_vignetting().1
             ));
             //
             ui.separator();

@@ -16,9 +16,10 @@ pub fn calc_viewangle(ph_diameter: f32, ph_thickness: f32) -> f32 {
 }
 
 // from https://cral-perso.univ-lyon1.fr/labo/fc/cdroms/cdrom2004/cd_venus/documents/pinhole/pinhole_imaging.html
-pub fn calc_vignetting(ph_focallength: f32, ph_diagonal: f32) -> (f32, f32) {
-    let div = ph_focallength / ph_diagonal;
-    let angle = 90. - div.atan().to_degrees();
+// Not that our projection radius in egui code is diameter...
+pub fn calc_vignetting(ph_focallength: f32, film_radius: f32) -> (f32, f32) {
+    let div = ph_focallength / film_radius; // opposite / adjacent
+    let angle = 90. - div.atan().to_degrees(); // 90 - angle because we want the other one
     let cos4 = angle.to_radians().cos(); //.to_degrees();
     let cos4 = cos4.powi(4);
     (cos4, angle)

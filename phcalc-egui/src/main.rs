@@ -207,12 +207,12 @@ impl eframe::App for MyApp {
                     });
             });
             ui.label(format!(
-                "View angle {:.1} degrees which covers a diameter of {:.1}mm",
+                "View angle is {:.1} degrees which covers a diameter of {:.1}mm",
                 2. * self.calc_viewangle(),
                 2. * self.calc_coverage_radius(),
             ));
             ui.label(format!(
-                "F-stop f/{:.1} is {:.1} f-stops from f/32",
+                "F-stop is f/{:.1} which is {:.1} f-stops from f/32",
                 self.ph_focallength / self.ph_diameter,
                 pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
             ));
@@ -228,7 +228,7 @@ impl eframe::App for MyApp {
             */
             ////
             ui.label(format!(
-                "Vignetting for desired projection Ø {:.1} f-stops ({:.2}) at {:.1} degrees angle",
+                "Vignetting for desired projection Ø is {:.1} f-stops ({:.2}) at a {:.1} degree angle",
                 //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                 pinhole::stop_equivalent(self.calc_vignetting().0),
                 self.calc_vignetting().0,
@@ -248,7 +248,7 @@ impl eframe::App for MyApp {
                 ui.add(
                     egui::Slider::new(&mut self.ph_rayleighfactor, 1.0..=2.0)
                         .fixed_decimals(2)
-                        .text("Rayleight factor"),
+                        .text("Rayleigh factor"),
                 );
             });
             ui.horizontal(|ui| {
@@ -262,7 +262,7 @@ impl eframe::App for MyApp {
             });
             self.ph_magnification = self.ph_focallength / (self.ph_subjectdist * 1000.);
             ui.label(format!(
-                "Optimal pinhole diameter for this focal length {:.2} mm (at {:.1} magnification)",
+                "Optimal pinhole Ø for this focal length is {:.2} mm (at {:.1} magnification)",
                 self.calc_optimalsize(),
                 self.ph_magnification
             ));

@@ -2,6 +2,8 @@
 
 Pinhole calculations with a GUI. Experimental.
 
+![phcalc-egui screenshot](screenshots/phcalc_egui_00.png?raw=true)
+
 ## Installation
 
 ```shell

@@ -1,0 +1,120 @@
+name: Release binaries
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: your_binary_name  # must match [[bin]] name or package name
+
+jobs:
+  build:
+    name: build (${{ matrix.os }} • ${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            archive: tar.gz
+            strip: true
+          - os: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+            archive: tar.gz
+            strip: true
+            musl: true
+          - os: macos-14
+            target: aarch64-apple-darwin
+            archive: tar.gz
+            strip: true
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            archive: zip
+            strip: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install MUSL tools (Linux static)
+        if: matrix.musl == true
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - name: Cache cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.target }}-cargo-
+
+      - name: Build
+        run: cargo build --locked --release --target ${{ matrix.target }}
+
+      - name: Determine binary path
+        id: bin
+        shell: bash
+        run: |
+          BIN="${APP_NAME}"
+          EXT=""
+          [[ "${{ matrix.target }}" == *windows* ]] && EXT=".exe"
+          echo "path=target/${{ matrix.target }}/release/${BIN}${EXT}" >> $GITHUB_OUTPUT
+
+      - name: Strip
+        if: matrix.strip == true
+        run: |
+          if command -v strip >/dev/null 2>&1; then strip "${{ steps.bin.outputs.path }}" || true; fi
+
+      - name: Package (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        run: |
+          mkdir -p dist
+          NAME="${APP_NAME}-${{ matrix.target }}"
+          cp "${{ steps.bin.outputs.path }}" "${APP_NAME}"
+          tar -czf "dist/${NAME}.tar.gz" "${APP_NAME}"
+          rm -f "${APP_NAME}"
+
+      - name: Package (zip)
+        if: matrix.archive == 'zip'
+        run: |
+          mkdir -p dist
+          NAME="${APP_NAME}-${{ matrix.target }}"
+          cp "${{ steps.bin.outputs.path }}" "${APP_NAME}.exe"
+          powershell -Command "Compress-Archive -Path '${APP_NAME}.exe' -DestinationPath 'dist/${NAME}.zip'"
+          rm -f "${APP_NAME}.exe"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+          generate_release_notes: true

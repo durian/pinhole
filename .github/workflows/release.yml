@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  APP_NAME: phcalc-egui  # must match [[bin]] name or package name
+  APP_NAME: phcalc-egui
 
 jobs:
   build:
@@ -43,6 +43,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: 1.80.1
           targets: ${{ matrix.target }}
 
       - name: Install MUSL tools (Linux static)
@@ -60,17 +61,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.target }}-cargo-
 
-      - name: Build
-        run: cargo build --locked --release --target ${{ matrix.target }}
+      - name: Build (workspace member/bin)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --locked --release --target "${{ matrix.target }}" \
+            -p phcalc-egui --bin phcalc-egui
 
       - name: Determine binary path
         id: bin
         shell: bash
         run: |
-          BIN="${APP_NAME}"
           EXT=""
           [[ "${{ matrix.target }}" == *windows* ]] && EXT=".exe"
-          echo "path=target/${{ matrix.target }}/release/${BIN}${EXT}" >> $GITHUB_OUTPUT
+          echo "path=target/${{ matrix.target }}/release/${APP_NAME}${EXT}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify binary exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f "${{ steps.bin.outputs.path }}" ]]; then
+            echo "::error::Expected binary not found at ${{ steps.bin.outputs.path }}"
+            echo "Contents of target/${{ matrix.target }}/release:"
+            ls -al "target/${{ matrix.target }}/release" || true
+            exit 1
+          fi
 
       - name: Strip
         if: matrix.strip == true

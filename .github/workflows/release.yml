@@ -79,21 +79,22 @@ jobs:
 
       - name: Package (tar.gz)
         if: matrix.archive == 'tar.gz'
+        shell: bash
         run: |
-          mkdir -p dist
-          NAME="${APP_NAME}-${{ matrix.target }}"
-          cp "${{ steps.bin.outputs.path }}" "${APP_NAME}"
-          tar -czf "dist/${NAME}.tar.gz" "${APP_NAME}"
-          rm -f "${APP_NAME}"
+          set -euo pipefail
+          mkdir -p dist "pkg/${APP_NAME}-${{ matrix.target }}"
+          cp "${{ steps.bin.outputs.path }}" "pkg/${APP_NAME}-${{ matrix.target }}/${APP_NAME}"
+          tar -C pkg -czf "dist/${APP_NAME}-${{ matrix.target }}.tar.gz" "${APP_NAME}-${{ matrix.target }}"
 
       - name: Package (zip)
         if: matrix.archive == 'zip'
+        shell: pwsh
         run: |
-          mkdir -p dist
-          NAME="${APP_NAME}-${{ matrix.target }}"
-          cp "${{ steps.bin.outputs.path }}" "${APP_NAME}.exe"
-          powershell -Command "Compress-Archive -Path '${APP_NAME}.exe' -DestinationPath 'dist/${NAME}.zip'"
-          rm -f "${APP_NAME}.exe"
+          $Name = "$env:APP_NAME-${{ matrix.target }}"
+          New-Item -ItemType Directory -Force -Path "pkg/$Name" | Out-Null
+          Copy-Item "${{ steps.bin.outputs.path }}" "pkg/$Name/$env:APP_NAME.exe"
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Compress-Archive -Path "pkg/$Name/*" -DestinationPath "dist/$Name.zip" -Force
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

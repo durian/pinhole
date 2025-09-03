@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  APP_NAME: your_binary_name  # must match [[bin]] name or package name
+  APP_NAME: phcalc-egui  # must match [[bin]] name or package name
 
 jobs:
   build:

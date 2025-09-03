@@ -207,14 +207,16 @@ impl eframe::App for MyApp {
                     });
             });
             ui.label(format!(
-                "View angle is {:.1} degrees which covers a diameter of {:.1}mm",
+                "View angle is {:.1}˚ which covers a diameter of {:.1}mm",
                 2. * self.calc_viewangle(),
                 2. * self.calc_coverage_radius(),
             ));
             ui.label(format!(
-                "F-stop is f/{:.1} which is {:.1} f-stops from f/32",
+                "F-stop is f/{:.1} which is {:.1} f-stops from f/32 (t · {:.1})",
                 self.ph_focallength / self.ph_diameter,
-                pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
+                pinhole::delta_thirds(32f32, self.ph_focallength / self.ph_diameter),
+                (self.ph_focallength / self.ph_diameter / 32.)
+                    * (self.ph_focallength / self.ph_diameter / 32.)
             ));
             ////
             /*
@@ -228,7 +230,7 @@ impl eframe::App for MyApp {
             */
             ////
             ui.label(format!(
-                "Vignetting for desired projection Ø is {:.1} f-stops ({:.2}) at a {:.1} degree angle",
+                "Vignetting for desired projection Ø is {:.1} f-stops ({:.2}) at a {:.1}˚ angle",
                 //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                 pinhole::stop_equivalent(self.calc_vignetting().0),
                 self.calc_vignetting().0,

@@ -6,6 +6,9 @@ Pinhole calculations with a GUI. Experimental.
 
 ## Installation
 
+There are downloadable binaries under `releases`. For Windows and Mac, you have to allow
+unsigned programs to be installed.
+
 ```shell
 cargo install --locked --git https://github.com/durian/pinhole/ phcalc-egui
 ```
